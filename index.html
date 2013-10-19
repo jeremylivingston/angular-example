@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html ng-app="applicantApp">
+<head>
+    <title>AngularJS Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Recent Applicants</h1>
+        </div>
+
+        <table class="table table-striped" ng-controller="ApplicantListCtrl">
+            <thead>
+            <tr>
+                <th>&nbsp;</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Current Status</th>
+                <th>Quick Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="applicant in applicants">
+                <td><a href="#/view/{{applicant.id}}" ng-click="view(applicant)">View</a></td>
+                <td>{{ applicant.first_name }}</td>
+                <td>{{ applicant.last_name }}</td>
+                <td>{{ displayApproved(applicant) }}</td>
+                <td ng-if="applicant.approved == null">
+                    <a href="#/approve/{{applicant.id}}" class="btn btn-success btn-sm">Approve</a>
+                    <a href="#/reject/{{applicant.id}}" class="btn btn-danger btn-sm">Reject</a>
+                </td>
+                <td ng-if="applicant.approved != null">&nbsp;</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="modal fade view-modal" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true" ng-controller="ApplicantViewCtrl">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">View Applicant</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row primary-info">
+                            <div class="col-sm-6">
+                                <address>
+                                    <strong>{{applicant.first_name}} {{applicant.last_name}}</strong><br>
+                                    {{applicant.address}}<br>
+                                    {{applicant.city}}, {{applicant.state}} {{applicant.zip}}<br>
+                                    <abbr title="Phone">P:</abbr> {{applicant.phone}}<br>
+                                    <abbr title="Email">E:</abbr> {{applicant.email}}
+                                </address>
+                            </div>
+                            <div class="col-sm-6">
+                                <dl>
+                                    <dt>Program Status</dt>
+                                    <dd>{{displayApproved(applicant)}} ({{applicant.program.name}})</dd>
+                                    <dt>Referrer</dt>
+                                    <dd>{{applicant.referrer}}</dd>
+                                    <dt>High School</dt>
+                                    <dd>{{applicant.high_school}} ({{applicant.gpa}} GPA)</dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <dl class="dl-horizontal">
+                            <dt>Other Education</dt>
+                            <dd>{{applicant.other_education}}</dd>
+                            <dt>Leadership Experience</dt>
+                            <dd>{{applicant.leadership_experience}}</dd>
+                        </dl>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button ng-if="applicant.approved == null" type="button" ng-click="initApproval(applicant)" class="btn btn-success btn-sm">Approve</button>
+                        <button ng-if="applicant.approved == null" type="button" ng-click="initRejection(applicant)" class="btn btn-danger btn-sm">Reject</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/angular.js"></script>
+    <script src="js/angular-flash.js"></script>
+    <script src="js/angular-route.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
