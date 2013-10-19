@@ -22,18 +22,6 @@ applicantApp.factory('applicantProvider', ['$http', '$q', function($http, $q) {
             }, 1000);
 
             return deferred.promise;
-        },
-
-        get: function(id) {
-            angular.forEach(list, function(applicant, key) {
-                if (applicant.id == id) {
-                    return applicant;
-                }
-            });
-
-            // Make an HTTP call to get the applicant
-
-            return null;
         }
     };
 }]);
@@ -57,10 +45,6 @@ applicantControllers.controller('ApplicantListCtrl', ['$scope', 'applicantProvid
         }
 
         return (applicant.approved) ? 'Approved' : 'Rejected';
-    },
-
-    $scope.view = function(applicant) {
-        $('#viewModal').modal('toggle');
     }
 }]);
 
@@ -68,8 +52,7 @@ applicantControllers.controller('ApplicantListCtrl', ['$scope', 'applicantProvid
 applicantControllers.controller('ApplicantViewCtrl', ['$scope', '$rootScope', 'applicantProvider', function($scope, $rootScope, applicantProvider) {
     $scope.applicant = {};
 
-    $rootScope.$on('$routeChangeStart', function(next, current) {
-        console.log('i am here');
+    $rootScope.$on('$routeChangeStart', function(evt, next, current) {
         // I want this to set $scope.applicant and toggle the modal on
     });
 }]);
