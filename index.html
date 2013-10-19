@@ -6,19 +6,20 @@
 
     <link rel="stylesheet" href="css/bootstrap.css">
 </head>
-<body>
+<body ng-controller="ApplicantListCtrl">
     <div class="container">
         <div class="page-header">
             <h1>Recent Applicants</h1>
         </div>
 
-        <table class="table table-striped" ng-controller="ApplicantListCtrl">
+        <table class="table table-striped">
             <thead>
             <tr>
                 <th>&nbsp;</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Current Status</th>
+                <th>Quick Action</th>
             </tr>
             </thead>
             <tbody>
@@ -27,15 +28,20 @@
                     Clicking this link should set ApplicantViewCtrl.applicant
                     to the current applicant and show the modal
                 -->
-                <td><a href="#/view/{{applicant.id}}">View</a></td>
+                <td><a href="#" ng-click="view(applicant)">View</a></td>
                 <td>{{ applicant.first_name }}</td>
                 <td>{{ applicant.last_name }}</td>
                 <td>{{ displayApproved(applicant) }}</td>
+                <td ng-if="applicant.approved == null">
+                    <a href="#" class="btn btn-success btn-sm" ng-click="toggleApproval(applicant)">Approve</a>
+                    <a href="#" class="btn btn-danger btn-sm" ng-click="toggleRejection(applicant)">Reject</a>
+                </td>
+                <td ng-if="applicant.approved != null">&nbsp;</td>
             </tr>
             </tbody>
         </table>
 
-        <div class="modal fade view-modal" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true" ng-controller="ApplicantViewCtrl">
+        <div class="modal fade view-modal" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -76,6 +82,55 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="approvalModal" tabindex="-1" role="dialog" aria-labelledby="approvalModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Approve {{applicant.first_name}} {{applicant.last_name}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" ng-submit="approve(applicant)" name="approvalForm" ng-show="programs.length" method="post" novalidate="novalidate">
+
+                            <div class="form-group">
+                                <label>Please verify the program in which you would like to enroll this applicant.</label>
+                                <select name="program" class="form-control" ng-model="approvalProgram" ng-options="program.id as program.name for program in programs" required>
+                                </select>
+                            </div>
+                        </form>
+
+                        <div ng-hide="programs.length">
+                            <p>There are currently no programs defined.</p>
+                            <p>You must first create a program in order to accept applicants.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" ng-click="approve(applicant)" ng-show="programs.length && approvalForm.$valid" class="btn btn-success">Approve Applicant</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="rejectionModal" tabindex="-1" role="dialog" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Reject an Applicant</h4>
+                    </div>
+                    <div class="modal-body">
+                        <strong>We get it. This applicant totally isn't worth it. {{applicant.first_name}} is kind of a jerk anyway.</strong>
+                        <p>Click the Reject Applicant button to give them the boot.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" ng-click="reject(applicant)" class="btn btn-danger">Reject Applicant</button>
                     </div>
                 </div>
             </div>
